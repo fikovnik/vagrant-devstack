@@ -1,0 +1,32 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  # setup cache
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :box
+    # setup PIP cache
+    config.cache.enable :generic, { "pip" => { :cache_dir => "/var/cache/pip" } }
+    config.vm.provision "file", source: "pip.conf", destination: "/home/vagrant/.pip/pip.conf"
+  else
+    print "vagrant-cachier plugin has not been found."
+    print "You can install it by `vagrant plugin install vagrant-cachier`"
+  end
+
+  config.vm.box = "precise64-cloud-image"
+  config.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/precise/current/precise-server-cloudimg-amd64-vagrant-disk1.box"
+
+  config.vm.hostname = "devstack"
+
+  # eth0: NAT network - is created by default by Vagrant
+  # eth1: host-only network - to access the VM using its IP address
+  config.vm.network :private_network, ip: "192.168.1.11"
+
+  config.vm.provider :virtualbox do |vb|
+      vb.memory = 4096
+      vb.cpus = 4
+    end
+
+  config.vm.provision :shell, :path => "devstack.sh", :privileged => false, :upload_path => "/home/vagrant/devstack.sh"
+
+end
