@@ -1,4 +1,15 @@
-# single-node
+# vagrant-devstack
+
+A sample [devstack](http://devstack.org) deployment in [Vagrant](http://vagrantup.com).
+While there are plenty of similar projects on [github](https://github.com/search?q=vagrant%20devstack) and elsewhere, I did not find a one that would satisfy the following requirements:
+
+- support single/multi-node deployment
+- minimum dependencies, i.e., no Chef, Puppet and the like
+- allows one to connect to VMs from the host machine using floating IPs
+- allows one to connect to Internet from VMs
+- transparently caches packages (APT, PIP) to speed up deployment
+
+## single-node setup
 
 1. Boot up
 
@@ -80,3 +91,8 @@
         ```sh
         $ ping 192.168.1.130
         ```
+
+## multi-node setup
+
+Multi node deployment is pretty much the same as the single-node.
+Before you boot it using `vagrant up` check the `Vagrantfile` if the node configuration is reasonable for the host machine.
