@@ -7,7 +7,7 @@ OPENSTACK_VERSION=stable/icehouse
 base="`dirname \"$0\"`"
 base="`( cd \"$BASHPATH\" && pwd )`"
 
-sudo apt-get update
+sudo apt-get update -qqy
 sudo apt-get install -qqy git
 
 if [ ! -f ~/.ssh/id_rsa ]; then
@@ -40,10 +40,12 @@ FLAT_INTERFACE=eth1
 FIXED_RANGE=10.1.1.0/24
 FIXED_NETWORK_SIZE=256
 FLOATING_RANGE=192.168.42.128/25
+
 EOF
 
+./unstack.sh && ./stack.sh
 
-./unstack.sh && FORCE=yes ./stack.sh
+echo "OFFLINE=True" >> local.conf
 
 # enable Internet access for the VMs
 # https://github.com/lorin/devstack-vm/issues/2#issuecomment-26503612 
@@ -53,7 +55,7 @@ sudo iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE
 # openstack configuration
 source $devstack_home/openrc admin admin
 
-nova keypair-add --pub_key=~/.ssh/id_rsa.pub $(hostname)
+nova keypair-add --pub_key=~/.ssh/id_rsa.pub default	
 
 nova secgroup-add-rule default tcp 22 22 0.0.0.0/0
 nova secgroup-add-rule default icmp -1 -1 0.0.0.0/0
