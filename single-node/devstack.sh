@@ -16,24 +16,17 @@ fi
 
 devstack_home="$HOME/devstack"
 
-if [ ! -d "$devstack_home" ]
-then
-  git clone -b $OPENSTACK_VERSION https://github.com/openstack-dev/devstack.git "$devstack_home"
+if [ ! -d "$devstack_home" ]; then
+  git clone https://github.com/openstack-dev/devstack.git "$devstack_home"
 fi
 
 cd "$devstack_home"
-
-# WORKAROUND: https://bugs.launchpad.net/python-openstackclient/+bug/1326811
-patch_1326811="bug_1326811.patch" 
-if [ ! -f "$patch_1326811" ]; then
-  git fetch https://review.openstack.org/openstack-dev/devstack refs/changes/63/98263/1 && git format-patch -1 --stdout FETCH_HEAD > "$patch_1326811"
-  git apply < "$patch_1326811"
-fi
 
 cat > "local.conf" <<EOF
 [[local|localrc]]
 
 DEST=/opt/stack
+LOGFILE=/opt/stack/logs/stack.sh.log
 SCREEN_LOGDIR=/opt/stack/logs/screen
 
 ADMIN_PASSWORD=admin
